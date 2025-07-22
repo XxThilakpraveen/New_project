@@ -1,0 +1,92 @@
+encapsulation
+its nothing but grouping all the properties and methods together 
+with this we can prevent the change of data within the class
+
+class BankAccount {
+    private var balance: Double = 0.0  // Encapsulated (hidden)
+
+    fun deposit(amount: Double) {
+        if (amount > 0) {
+            balance += amount
+        }
+
+
+    }
+
+    fun getBalance(): Double {
+        return balance
+    }
+} 
+
+var acc = BankAccount()
+acc.balance = 2000 itll not work we should do it by using the function
+acc.deposit(2000)
+
+inheritence
+
+in inheritance we inherit the the child class into the parent class to resuse the code makes the program eff
+
+open class Animal {
+    fun breathe() {
+        println("Breathing...")
+    }
+}
+
+class Dog : Animal() {
+    fun bark() {
+        println("Barking...")
+    }
+}
+
+fun main() {
+    val d = Dog()
+    d.breathe()  // inherited from Animal
+    d.bark()     // defined in Dog
+}
+
+Abstraction
+
+in abstraction we hide the actual functionality by either over riding it or doing the actual implementation in the parent class
+
+abstract class Animal {
+    abstract fun makeSound()
+
+    fun sleep() {
+        println("Sleeping...")
+    }
+}
+
+class Dog : Animal() {
+    override fun makeSound() {
+        println("Bark!")
+    }
+}
+fun main(){
+    val dg = Dog()
+    dg.sleep()
+}
+
+Polymorphism
+
+it allows a single function to behave differently based on the obj its associated to
+
+open class Animal {
+    open fun makeSound() {
+        println("Some generic sound")
+    }
+}
+
+class Dog : Animal() {
+    override fun makeSound() {
+        println("Bark!")
+    }
+}
+
+class Cat : Animal() {
+    override fun makeSound() {
+        println("Meow!")
+    }
+}
+
+
+
