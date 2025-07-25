@@ -1,7 +1,7 @@
 import kotlin.random.Random
 
 fun main() {
-
+    val new_Arr = Array(25) {it +1 }
     val numbers = MutableList(50)   { it + 1 }
     println(numbers.size)
 
@@ -11,10 +11,12 @@ fun main() {
 
     println(numbers.joinToString())
     for (i in 0..24) {
-
-        numbers.removeAt(Random.nextInt(numbers.size))
-
+        val rand_indx = Random.nextInt(numbers.size)
+        println(rand_indx)
+        numbers.removeAt(rand_indx)
     }
+
+    println(new_Arr.joinToString())
     println(numbers.joinToString())
     println(numbers.size)
 }
