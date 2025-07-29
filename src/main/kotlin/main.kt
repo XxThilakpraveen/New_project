@@ -1,5 +1,7 @@
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.LocalTime
+import java.time.format.DateTimeParseException
 import kotlin.random.Random
 
 val checkinAttendanceList = mutableListOf<attendaceDetails>()
@@ -14,12 +16,10 @@ data class EmpDetails(
 
 data class attendaceDetails(
     val id: String,
-    val checkinDateTime: String
+    val checkinDateTime: LocalDateTime
 )
 
 class Main {
-
-    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     fun createUser(firstName: String, lastName: String, role: String): EmpDetails {
 
@@ -40,37 +40,42 @@ class Main {
         return idString
     }
 
-    fun dailyCheckIn(emp: EmpDetails): Boolean {
-        val currentTime = getCurrentTime()
-        val existingEmp = findEmployee(emp.id)
+    fun dailyCheckIn(emp: EmpDetails, id: String, Date: LocalDateTime = LocalDateTime.now()): Boolean {
+        val existingEmp = findEmployeeInEmpList(id)
 
         return if (existingEmp != null) {
-            if (hasAlreadyCheckedIn(emp.id)) {
-                println("Employee with ID ${emp.id} has already checked in.")
+            if (hasAlreadyCheckedIn(id)) {
+                println("Employee with ID ${id} has already checked in.")
                 false
             } else {
-                addNewCheckin(emp, currentTime)
+                addNewCheckin(emp, Date)
                 true
             }
         } else {
-            println("Employee with ID ${emp.id} does not exist in the system.")
+            println("Employee with ID ${id} does not exist in the system.")
             false
         }
     }
+//    fun dailyCheckOut(checkedInEmp: attendaceDetails) {
+//       val checkedInEmp = findEmployeeInAttendanceList(checkedInEmp.id)
+//        if (hasAlreadyCheckedIn(checkedInEmp)) {
+//
+//        }
+//    }
 
-    private fun getCurrentTime(): String {
-        return LocalDateTime.now().format(formatter)
+    private fun findEmployeeInEmpList(id: String): EmpDetails? {
+        return employeeDatabase.find { it.id == id }
     }
 
-    private fun findEmployee(id: String): EmpDetails? {
-        return employeeDatabase.find { it.id == id }
+    private fun findEmployeeInAttendanceList(id: String): attendaceDetails? {
+        return checkinAttendanceList.find { it.id == id }
     }
 
     private fun hasAlreadyCheckedIn(id: String): Boolean {
         return checkinAttendanceList.any { it.id == id }
     }
 
-    private fun addNewCheckin(emp: EmpDetails, currentTime: String) {
+    private fun addNewCheckin(emp: EmpDetails, currentTime: LocalDateTime) {
         val empAttendance = attendaceDetails(emp.id, currentTime)
         checkinAttendanceList.add(empAttendance)
         println("Employee ${emp.firstName} ${emp.lastName} checked in at $currentTime.")
@@ -116,19 +121,48 @@ class Main {
 fun main() {
     val system = Main()
 
-    val emp1 = system.createUser("Bruce", "Wayne", "Manager")
-    val emp2 = system.createUser("Subash", "Smith", "CEO")
-    val emp3 = system.createUser("Tony", "Stark", "Developer")
-    val emp4 = system.createUser("Charles", "Xavier", "Developer")
+    system.createUser("Bruce", "Wayne", "Manager")
+    system.createUser("Subash", "Smith", "CEO")
+    system.createUser("Tony", "Stark", "Developer")
+    system.createUser("Charles", "Xavier", "Developer")
 
-    system.dailyCheckIn(emp1)
-    system.dailyCheckIn(emp2)
-    system.dailyCheckIn(emp3)
-    system.dailyCheckIn(emp4)
-    system.dailyCheckIn(emp4)
+    fun getCheckinDetails(): Pair<String, LocalDateTime> {
+        println("Enter ID (or type 'exit' to stop): ")
+        val id = readLine()?.trim() ?: ""
+        if (id.equals("exit", ignoreCase = true)) return Pair("exit", LocalDateTime.now())
+
+        println("Enter date (yyyy-MM-dd): ")
+        val dateInput = readLine()
+
+        val dateTime = try {
+            if (dateInput.isNullOrBlank()) {
+                LocalDateTime.now()
+            } else {
+                // Combine entered LocalDate with the current time
+                LocalDate.parse(dateInput).atTime(LocalTime.now())
+            }
+        } catch (e: DateTimeParseException) {
+            println("Invalid format. Defaulting to today’s date and time.")
+            LocalDateTime.now()
+        }
+
+        return Pair(id, dateTime)
+    }
+
+    while (true) {
+        val (id, dateTime) = getCheckinDetails()
+        if (id == "exit") break
+
+        val emp = employeeDatabase.find { it.id == id }
+        if (emp != null) {
+            system.dailyCheckIn( emp, id,dateTime)
+        } else {
+            println("No employee found with ID $id")
+        }
+    }
 
     system.showAttendance()
 
-    system.reportTo(emp4)
-    system.reportTo(emp1)
+//    system.reportTo(emp4)
+//    system.reportTo(emp1)
 }
