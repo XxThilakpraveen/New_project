@@ -16,12 +16,13 @@ data class EmpDetails(
 
 data class attendaceDetails(
     val id: String,
-    val checkinDateTime: LocalDateTime
+    val checkinDateTime: LocalDateTime,
+    var checkoutDateTime: LocalDateTime? = null
 )
 
 class Main {
 
-    fun createUser(firstName: String, lastName: String, role: String): EmpDetails {
+    fun createEmp(firstName: String, lastName: String, role: String): EmpDetails {
 
         val generatedId = generateUniqueId(firstName, lastName)
         val newEmp = EmpDetails(generatedId, firstName, lastName, role)
@@ -56,12 +57,18 @@ class Main {
             false
         }
     }
-//    fun dailyCheckOut(checkedInEmp: attendaceDetails) {
-//       val checkedInEmp = findEmployeeInAttendanceList(checkedInEmp.id)
-//        if (hasAlreadyCheckedIn(checkedInEmp)) {
-//
-//        }
-//    }
+
+    fun dailyCheckOut(id: String, checkoutTime: LocalDateTime = LocalDateTime.now()) {
+        val record = checkinAttendanceList.find { it.id == id && it.checkoutDateTime == null }
+
+        if (record != null) {
+            record.checkoutDateTime = checkoutTime
+            println("Employee with ID $id checked out at $checkoutTime.")
+        } else {
+            println("No active check-in found for ID $id.")
+        }
+    }
+
 
     private fun findEmployeeInEmpList(id: String): EmpDetails? {
         return employeeDatabase.find { it.id == id }
@@ -121,45 +128,64 @@ class Main {
 fun main() {
     val system = Main()
 
-    system.createUser("Bruce", "Wayne", "Manager")
-    system.createUser("Subash", "Smith", "CEO")
-    system.createUser("Tony", "Stark", "Developer")
-    system.createUser("Charles", "Xavier", "Developer")
+    system.createEmp("Bruce", "Wayne", "Manager")
+    system.createEmp("Subash", "Smith", "CEO")
+    system.createEmp("Tony", "Stark", "Developer")
+    system.createEmp("Charles", "Xavier", "Developer")
 
-    fun getCheckinDetails(): Pair<String, LocalDateTime> {
-        println("Enter ID (or type 'exit' to stop): ")
-        val id = readLine()?.trim() ?: ""
-        if (id.equals("exit", ignoreCase = true)) return Pair("exit", LocalDateTime.now())
+    fun getDateTime() : LocalDateTime{
 
-        println("Enter date (yyyy-MM-dd): ")
         val dateInput = readLine()
-
-        val dateTime = try {
+        val  dateTime = try {
             if (dateInput.isNullOrBlank()) {
                 LocalDateTime.now()
             } else {
-                // Combine entered LocalDate with the current time
                 LocalDate.parse(dateInput).atTime(LocalTime.now())
             }
         } catch (e: DateTimeParseException) {
-            println("Invalid format. Defaulting to today’s date and time.")
+            println("Invalid format. Defaulting to current date and time.")
             LocalDateTime.now()
         }
+        return dateTime
 
-        return Pair(id, dateTime)
     }
 
     while (true) {
-        val (id, dateTime) = getCheckinDetails()
-        if (id == "exit") break
+        println("\nEnter 'checkin' or 'checkout' or 'exit': ")
+        val action = readLine()?.trim()?.lowercase() ?: ""
+
+        if (action == "exit") break
+        if (action != "checkin" && action != "checkout") {
+            println("Invalid action. Please enter 'checkin', 'checkout' or 'exit'.")
+            continue
+        }
+
+        println("Enter ID: ")
+        val id = readLine()?.trim() ?: ""
 
         val emp = employeeDatabase.find { it.id == id }
-        if (emp != null) {
-            system.dailyCheckIn( emp, id,dateTime)
-        } else {
+        if (emp == null) {
             println("No employee found with ID $id")
+            continue
+        }
+
+        when (action) {
+            "checkin" -> {
+                // Always ask for date (like your getEmpDetails)
+                println("Enter check-in date (yyyy-MM-dd): ")
+                val checkinTime = getDateTime()
+                system.dailyCheckIn(emp, id, checkinTime)
+            }
+
+            "checkout" -> {
+                // Optional date input
+                println("Enter checkout date (yyyy-MM-dd) or press Enter to use current time: ")
+                val checkoutTime = getDateTime()
+                system.dailyCheckOut(id, checkoutTime)
+            }
         }
     }
+
 
     system.showAttendance()
 
