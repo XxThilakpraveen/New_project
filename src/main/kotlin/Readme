@@ -1,0 +1,56 @@
+Employee Attendance System
+--------------------------
+
+Description:
+------------
+A simple console-based Kotlin application to manage:
+- Employee creation
+- Daily check-in and check-out
+- Attendance history
+- Reporting hierarchy based on roles
+
+Technology Used:
+----------------
+- Kotlin
+- LocalDateTime for date and time
+- Console input/output
+
+How to Run:
+-----------
+1. Open the project in an IDE like IntelliJ OR
+2. Use terminal:
+   kotlinc AttendanceSystem.kt -include-runtime -d attendance.jar
+   java -jar attendance.jar
+
+Usage:
+------
+When the program starts, you will see:
+
+Enter
+ 1 -> checkin
+ 2 -> checkout
+ 3 -> exit
+
+Actions:
+--------
+- For check-in (1):
+  - Enter employee ID
+  - Optionally enter a date (yyyy-MM-dd) or press Enter for current time
+
+- For check-out (2):
+  - Enter employee ID
+  - Optionally enter a date (yyyy-MM-dd) or press Enter for current time
+
+Rules:
+------
+- An employee can only check in once before checking out
+- Checkout time must not be before check-in time
+- Future times are not allowed for checkout
+
+Output:
+-------
+Example:
+Employee Tony Stark checked in at 2025-07-30T09:20
+Employee with ID TS101 checked out at 2025-07-30T17:20, has worked for 8 hours.
+
+
