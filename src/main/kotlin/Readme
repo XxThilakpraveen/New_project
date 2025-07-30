@@ -1,56 +1,86 @@
-Employee Attendance System
---------------------------
+Function Documentation  
+----------------------
 
-Description:
-------------
-A simple console-based Kotlin application to manage:
-- Employee creation
-- Daily check-in and check-out
-- Attendance history
-- Reporting hierarchy based on roles
+Data Classes:  
+-------------
+1. DataEmployee  
+   - Represents an employee with id, firstName, lastName, and role.
 
-Technology Used:
-----------------
-- Kotlin
-- LocalDateTime for date and time
-- Console input/output
+2. DataAttendance  
+   - Represents an attendance record with employee id, check-in time, and optional check-out time.
 
-How to Run:
------------
-1. Open the project in an IDE like IntelliJ OR
-2. Use terminal:
-   kotlinc AttendanceSystem.kt -include-runtime -d attendance.jar
-   java -jar attendance.jar
+Global Lists:  
+-------------
+- employeeDatabase  
+  - Stores all created employees.
 
-Usage:
-------
-When the program starts, you will see:
+- checkInAttendanceList  
+  - Stores all attendance records (check-in/check-out).
 
-Enter
- 1 -> checkin
- 2 -> checkout
- 3 -> exit
+EmployeeClass Methods:  
+-----------------------
+1. createEmp(firstName: String, lastName: String, role: String): DataEmployee  
+   - Creates a new employee with a unique ID and adds to the employeeDatabase.
+   - Prints confirmation with employee details.
 
-Actions:
---------
-- For check-in (1):
-  - Enter employee ID
-  - Optionally enter a date (yyyy-MM-dd) or press Enter for current time
+2. generateUniqueId(firstName: String, lastName: String): String
+   - Generates a unique employee ID based on initials and random number. Ensures no duplicates.
 
-- For check-out (2):
-  - Enter employee ID
-  - Optionally enter a date (yyyy-MM-dd) or press Enter for current time
+3. listAllEmployees()
+   - Prints the list of all employees in the database.
+   - Shows a message if the database is empty.
 
-Rules:
-------
-- An employee can only check in once before checking out
-- Checkout time must not be before check-in time
-- Future times are not allowed for checkout
+AttendanceClass Methods:
+-------------------------
+1. dailyCheckIn(emp: DataEmployee, id: String, date: LocalDateTime = now): Boolean
+   - Validates if employee exists and hasn't checked in already.
+   - Adds a check-in record if valid.
+   - Returns true if check-in was successful.
 
-Output:
--------
-Example:
-Employee Tony Stark checked in at 2025-07-30T09:20
-Employee with ID TS101 checked out at 2025-07-30T17:20, has worked for 8 hours.
+2. getDateTime(): LocalDateTime
+   - Reads date input from user (format: yyyy-MM-dd).
+   - Parses input or returns current time if blank/invalid.
+   - Prevents future dates.
 
+3. dailyCheckOut(id: String, checkoutTime: LocalDateTime)
+   - Validates if employee has an active check-in record.
+   - Ensures checkout is after check-in and not in the future.
+   - Updates the record with checkout time and calculates duration.
+   - Prints confirmation and hours worked.
+
+4. showAttendance()
+   - Displays all attendance records (check-in and check-out times).
+   - Shows "Still Checked-in" for incomplete entries.
+
+5. hasAlreadyCheckedIn(id: String): Boolean
+   - Checks if employee has an active check-in without checkout.
+
+6. getActiveCheckIn(id: String): DataAttendance?
+   - Returns the employee's current active check-in record if it exists.
+   - Returns null otherwise.
+
+7. findEmployeeInEmpList(id: String): DataEmployee?
+   - Finds and returns an employee by ID from employeeDatabase.
+   - Returns null if not found.
+
+8. addNewCheckin(emp: DataEmployee, currentTime: LocalDateTime)
+   - Creates a new attendance record and adds to checkInAttendanceList.
+   - Prints confirmation of check-in.
+
+Utility Functions:
+------------------
+
+1. getValidEmployeeIdOrNull(): DataEmployee?
+   - Prompts for employee ID input.
+   - Returns employee if found; else prints error and returns null.
+
+Main Function:
+--------------
+- Starts by creating sample employees.
+- Displays a menu:
+  1 -> Check-in
+  2 -> Check-out
+  3 -> Show Attendance
+  4 -> Show Employee List
+  5 -> Exit
 
