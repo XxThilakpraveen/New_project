@@ -23,10 +23,14 @@ EmployeeClass Methods:
    - Creates a new employee with a unique ID and adds to the employeeDatabase.
    - Prints confirmation with employee details.
 
-2. generateUniqueId(firstName: String, lastName: String): String
-   - Generates a unique employee ID based on initials and random number. Ensures no duplicates.
+2. getValidEmployeeIdOrNull(): DataEmployee?
+   - Prompts for employee ID input.
+   - Returns employee if found; else prints error and returns null.
 
-3. listAllEmployees()
+3. generateUniqueId(firstName: String, lastName: String): String
+   - Generates a unique employee ID based on Firstname,Lastname and random number. Ensures no duplicates.
+
+4. listAllEmployees()
    - Prints the list of all employees in the database.
    - Shows a message if the database is empty.
 
@@ -67,12 +71,6 @@ AttendanceClass Methods:
    - Creates a new attendance record and adds to checkInAttendanceList.
    - Prints confirmation of check-in.
 
-Utility Functions:
-------------------
-
-1. getValidEmployeeIdOrNull(): DataEmployee?
-   - Prompts for employee ID input.
-   - Returns employee if found; else prints error and returns null.
 
 Main Function:
 --------------
