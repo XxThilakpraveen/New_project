@@ -26,9 +26,4 @@ class EmployeeManager {
     fun deleteEmployee(id: String): Boolean {
         return employeeList.delete(id)
     }
-
-    override fun toString(): String {
-        if (employeeList.list.isEmpty()) return "No employees found."
-        return employeeList.list.joinToString("\n") { it.toString() }
-    }
 }
