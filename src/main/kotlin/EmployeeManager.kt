@@ -18,10 +18,7 @@ class EmployeeManager {
         val emp = Employee(id, firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
         return employeeList.update(emp)
     }
-
-    fun readEmployee(id: String): Employee? {
-        return employeeList.list.find { it.id == id }
-    }
+    
 
     fun deleteEmployee(id: String): Boolean {
         return employeeList.delete(id)
