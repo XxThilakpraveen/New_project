@@ -1,12 +1,25 @@
-open class EmployeeList {
-    protected val employeeDatabase = mutableListOf<DataEmployee>()
+class EmployeeList {
+    val list = ArrayList<Employee>()
 
-    open fun addEmployee(emp: DataEmployee): Boolean {
-        employeeDatabase.add(emp)
-        return true
+    fun add(emp: Employee): Boolean {
+        if (!emp.isValid()) return false
+        if (list.any { it.id == emp.id }) {
+            println("Error: Employee with ID ${emp.id} already exists.")
+            return false
+        }
+        return list.add(emp)
     }
 
-    fun getEmployee(id: String): DataEmployee? = employeeDatabase.find { it.id == id }
+    fun update(emp: Employee): Boolean {
+        if (!emp.isValid()) return false
+        val index = list.indexOfFirst { it.id == emp.id }
+        return if (index != -1) {
+            list[index] = emp
+            true
+        } else false
+    }
 
-    fun getAllEmployees(): List<DataEmployee> = employeeDatabase
+    fun delete(id: String): Boolean {
+        return list.removeIf { it.id == id }
+    }
 }
