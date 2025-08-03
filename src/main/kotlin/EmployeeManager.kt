@@ -1,4 +1,3 @@
-import java.time.Duration
 import java.time.LocalDateTime
 
 class EmployeeManager {
@@ -52,7 +51,6 @@ class EmployeeManager {
         return attendanceList.add(attendance)
     }
 
-    // Corrected `checkOut` method
     fun checkOut(id: String, checkOutDateTime: LocalDateTime): Boolean {
         val openAttendance = attendanceList.list.find { it.id == id && it.checkOutDateTime == null }
 
