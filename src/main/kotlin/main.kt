@@ -1,11 +1,52 @@
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 val displayFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
 fun main() {
-    val empManager = EmployeeClass()
-    val attManager = AttendanceClass()
-    val menuHandler = MenuHandler(empManager, attManager)
+    val employeeManager = EmployeeManager()
+//    val employee        = Employee("JD001","John", "Doe", Role.DEVELOPER, "Engineering", "AS002")
+
+    fun readEmployeeId(): String? {
+        print("Enter Employee ID: ")
+        return readLine()?.trim()
+    }
+
+    fun readDateTime(prompt: String): LocalDateTime? {
+        print("$prompt (yyyy-MM-dd HH:mm): ")
+        val input = readLine()?.trim()
+        if (input == "") return LocalDateTime.now()
+        return try {
+            LocalDateTime.parse(input, displayFormatter)
+        } catch (e: Exception) {
+            println("Invalid datetime format. Please use yyyy-MM-dd HH:mm.")
+            null
+        }
+    }
+
+    fun handleCheckIn() {
+        val id = readEmployeeId() ?: return
+        val checkInTime = readDateTime("Enter Check-in DateTime") ?: return
+        if (employeeManager.checkIn(id, checkInTime)) println("Check-in successful.")
+    }
+
+    fun handleCheckOut() {
+        val id = readEmployeeId() ?: return
+        val checkOutTime = readDateTime("Enter Check-out DateTime") ?: return
+        if (employeeManager.checkOut(id, checkOutTime)) println("Check-out successful.")
+    }
+
+    fun showActiveList() {
+        println("--- Active Attendance List ---")
+        println(employeeManager.listActiveAttendances())
+    }
+
+    fun handleSummary() {
+        val fromDate = readDateTime("Enter From DateTime") ?: return
+        val toDate = readDateTime("Enter To DateTime") ?: return
+        println("--- Attendance Summary ---")
+        println(employeeManager.listAttendancesBetween(fromDate, toDate))
+    }
 
     while (true) {
         println(
@@ -22,12 +63,12 @@ fun main() {
         )
 
         when (readLine()?.trim()) {
-            "1" -> menuHandler.handleCheckIn()
-            "2" -> menuHandler.handleCheckOut()
-            "3" -> println(attManager)
-            "4" -> menuHandler.showActiveList()
-            "5" -> println(empManager)
-            "6" -> menuHandler.handleSummary()
+            "1" -> handleCheckIn()
+            "2" -> handleCheckOut()
+            "3" -> println(employeeManager.printAttendance())
+            "4" -> showActiveList()
+            "5" -> println(employeeManager.printEmployee())
+            "6" -> handleSummary()
             "7" -> {
                 println("Exiting...")
                 return

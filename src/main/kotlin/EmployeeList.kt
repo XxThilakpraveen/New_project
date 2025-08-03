@@ -13,10 +13,10 @@ class EmployeeList {
     fun update(emp: Employee): Boolean {
         if (!emp.isValid()) return false
         val index = list.indexOfFirst { it.id == emp.id }
-        return if (index != -1) {
+        if (index != -1) {
             list[index] = emp
-            true
-        } else false
+            return  true
+        } else return false
     }
 
     fun delete(id: String): Boolean {
