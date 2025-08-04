@@ -20,13 +20,12 @@ class EmployeeManager {
     }
 
     fun addEmployee(firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
-        val id = generateId(firstName, lastName)
-        val emp = Employee(id, firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
+        val emp = Employee(firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
         return employeeList.add(emp)
     }
 
     fun updateEmployee(id: String, firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
-        val emp = Employee(id, firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
+        val emp = Employee(firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
         return employeeList.update(emp)
     }
 
