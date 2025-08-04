@@ -9,13 +9,13 @@ class Attendance(
     var workingHours: String = ""
 ) {
 
-    fun checkInValid(): Boolean {
-        return checkOutDateTime == null
-    }
-
-    fun checkOutValid(checkout: LocalDateTime): Boolean {
-        return  checkout.isAfter(checkInDateTime)
-    }
+//    fun checkInValid(): Boolean {
+//        return checkOutDateTime == null
+//    }
+//
+//    fun checkOutValid(checkout: LocalDateTime): Boolean {
+//        return  checkout.isAfter(checkInDateTime)
+//    }
 
     fun calculateWorkingHours(): Boolean {
         val checkOutDateTime = checkOutDateTime ?: return false

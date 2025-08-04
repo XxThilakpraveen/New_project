@@ -4,7 +4,7 @@ class AttendanceList {
     val list = ArrayList<Attendance>()
 
     fun add(att: Attendance): Boolean {
-        if (!att.checkInValid()) return false
+//        if (!att.checkInValid()) return false
         if (list.any { it.id == att.id && it.checkOutDateTime == null }) {
             println("Error: Open attendance already exists for ID ${att.id}")
             return false
@@ -14,7 +14,7 @@ class AttendanceList {
 
     fun update(att: Attendance, checkout: LocalDateTime): Boolean {
         val index = list.indexOfFirst { it.id == att.id && it.checkOutDateTime == null }
-        if (!att.checkOutValid(checkout)) {
+        if (checkout.isBefore(att.checkInDateTime)) {
             println("Checkout time cannot be before checkin time")
             return false
         }
@@ -22,7 +22,7 @@ class AttendanceList {
         return if (index != -1) {
             att.calculateWorkingHours()
             list[index] = att
-            true
+            return true
         } else {
             println("No open attendance to update for ID ${att.id}")
             false
@@ -37,9 +37,32 @@ class AttendanceList {
         return list.filter { it.checkOutDateTime == null }
     }
 
-    fun getAttendancesBetween(from: LocalDateTime, to: LocalDateTime): List<Attendance> {
-        return list.filter { it.checkInDateTime.isAfter(from) && it.checkInDateTime.isBefore(to) }
+    fun getAttendancesBetween(from: LocalDateTime, to: LocalDateTime): String {
+        val attendanceBetween = list.filter {
+            it.checkInDateTime.isAfter(from) && it.checkInDateTime.isBefore(to)
+        }
+
+        if (attendanceBetween.isEmpty()) {
+            return "No attendance records found for the given range."
+        }
+
+        val groupedById = attendanceBetween.groupBy { it.id }
+
+        return groupedById.entries.joinToString("\n") { (id, records) ->
+            val totalHours = records.sumOf { attendance ->
+                val parts = attendance.workingHours.split(":")
+                val hours = parts.getOrNull(0)?.toIntOrNull() ?: 0
+                val minutes = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                val seconds = parts.getOrNull(2)?.toIntOrNull() ?: 0
+                hours + (minutes / 60.0) + (seconds / 3600.0)
+            }
+
+            "ID: $id -> Total Working Hours: %.2f hrs".format(totalHours)
+        }
     }
+
+
+
 
     override fun toString(): String {
         if (list.isEmpty()) return "No attendance records found."

@@ -6,7 +6,7 @@ class EmployeeManager {
     private var counter = 1
 
     init {
-        addEmployee("John", "Doe", Role.DEVELOPER, "Engineering", "AS002") // Fixed reportingTo
+        addEmployee("John", "Doe", Role.DEVELOPER, "Engineering", "AS002")
         addEmployee("Alice", "Smith", Role.MANAGER, "Engineering", "CJ005")
         addEmployee("Jackson", "Brown", Role.MANAGER, "Engineering", "CJ005")
         addEmployee("Bob", "Johnson", Role.DEVELOPER, "Engineering", "AS002")
@@ -83,10 +83,11 @@ class EmployeeManager {
         else active.joinToString("\n") { it.toString() }
     }
 
-    fun listAttendancesBetween(from: LocalDateTime, to: LocalDateTime): String {
+    fun listAttendancesBetween( from: LocalDateTime, to: LocalDateTime): String {
         val filtered = attendanceList.getAttendancesBetween(from, to)
-        return if (filtered.isEmpty()) "No attendance records found in the given range."
-        else filtered.joinToString("\n") { it.toString() }
+        return filtered
+//        return if (filtered.isEmpty()) "No attendance records found in the given range."
+//        else filtered.joinToString("\n") { it.toString() }
     }
 
     fun printEmployee(): String {
