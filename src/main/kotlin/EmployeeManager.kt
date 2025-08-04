@@ -3,7 +3,6 @@ import java.time.LocalDateTime
 class EmployeeManager {
     private val employeeList = EmployeeList()
     private val attendanceList = AttendanceList()
-    private var counter = 1
 
     init {
         addEmployee("John", "Doe", Role.DEVELOPER, "Engineering", "AS002")
@@ -12,29 +11,47 @@ class EmployeeManager {
         addEmployee("Bob", "Johnson", Role.DEVELOPER, "Engineering", "AS002")
         addEmployee("Clara", "Jones", Role.CEO, "Leadership", null)
     }
-    
+
     fun addEmployee(firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
         val emp = Employee(firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
         return employeeList.add(emp)
     }
 
     fun updateEmployee(id: String, firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
-        val emp = Employee(firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
-        return employeeList.update(emp)
+        val emp = employeeList.find { it.id == id }
+        return if (emp != null) {
+            emp.firstName = firstName.trim()
+            emp.lastName = lastName.trim()
+            emp.role = role
+            emp.department = dept.trim()
+            emp.reportingTo = reportingTo?.trim()
+            emp.isValid()
+        } else {
+            println("Employee with ID $id not found.")
+            false
+        }
     }
 
     fun deleteEmployee(id: String): Boolean {
-        return employeeList.delete(id)
+        return employeeList.removeIf { it.id == id }
     }
 
     fun checkIn(id: String, checkInDateTime: LocalDateTime): Boolean {
-        val employeeExists = employeeList.list.any { it.id == id }
+        val employeeExists = employeeList.any { it.id == id }
         if (!employeeExists) {
             println("Check-in Failed: Employee ID $id not found.")
             return false
         }
 
-        val hasOpenAttendance = attendanceList.list.any { it.id == id && it.checkOutDateTime == null }
+        // New: Check if employee already checked in today
+        val alreadyCheckedInToday = attendanceList.any { att -> att.id == id && att.checkInDateTime.toLocalDate() == checkInDateTime.toLocalDate()
+        }
+        if (alreadyCheckedInToday) {
+            println("Check-in Failed: Employee ID $id has already checked in today.")
+            return false
+        }
+
+        val hasOpenAttendance = attendanceList.any { it.id == id && it.checkOutDateTime == null }
         if (hasOpenAttendance) {
             println("Check-in Failed: Employee ID $id is already checked in.")
             return false
@@ -44,21 +61,19 @@ class EmployeeManager {
         return attendanceList.add(attendance)
     }
 
+
     fun checkOut(id: String, checkOutDateTime: LocalDateTime): Boolean {
-        val openAttendance = attendanceList.list.find { it.id == id && it.checkOutDateTime == null }
+        val openAttendance = attendanceList.find { it.id == id && it.checkOutDateTime == null }
 
         if (openAttendance == null) {
             println("Check-out Failed: No active check-in found for ID $id.")
             return false
         }
-//        openAttendance.checkOutDateTime = checkOutDateTime
         return attendanceList.update(openAttendance, checkOutDateTime)
-
     }
 
-
     fun deleteInvalidAttendanceById(id: String): Boolean {
-        val invalidRecord = attendanceList.list.find {
+        val invalidRecord = attendanceList.find {
             it.id == id && it.checkInDateTime == it.checkOutDateTime
         }
 
@@ -76,11 +91,8 @@ class EmployeeManager {
         else active.joinToString("\n") { it.toString() }
     }
 
-    fun listAttendancesBetween( from: LocalDateTime, to: LocalDateTime): String {
-        val filtered = attendanceList.getAttendancesBetween(from, to)
-        return filtered
-//        return if (filtered.isEmpty()) "No attendance records found in the given range."
-//        else filtered.joinToString("\n") { it.toString() }
+    fun listAttendancesBetween(from: LocalDateTime, to: LocalDateTime): String {
+        return attendanceList.getAttendancesBetween(from, to)
     }
 
     fun printEmployee(): String {

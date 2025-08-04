@@ -1,19 +1,18 @@
 import java.time.LocalDateTime
 
-class AttendanceList {
-    val list = ArrayList<Attendance>()
+class AttendanceList : ArrayList<Attendance>() {
 
-    fun add(att: Attendance): Boolean {
+    override fun add(att: Attendance): Boolean {
 //        if (!att.checkInValid()) return false
-        if (list.any { it.id == att.id && it.checkOutDateTime == null }) {
+        if (this.any { it.id == att.id && it.checkOutDateTime == null }) {
             println("Error: Open attendance already exists for ID ${att.id}")
             return false
         }
-        return list.add(att)
+        return super.add(att)
     }
 
     fun update(att: Attendance, checkout: LocalDateTime): Boolean {
-        val index = list.indexOfFirst { it.id == att.id && it.checkOutDateTime == null }
+        val index = this.indexOfFirst { it.id == att.id && it.checkOutDateTime == null }
         if (checkout.isBefore(att.checkInDateTime)) {
             println("Checkout time cannot be before checkin time")
             return false
@@ -21,8 +20,8 @@ class AttendanceList {
         att.checkOutDateTime = checkout
         return if (index != -1) {
             att.calculateWorkingHours()
-            list[index] = att
-            return true
+            this[index] = att
+            true
         } else {
             println("No open attendance to update for ID ${att.id}")
             false
@@ -30,15 +29,15 @@ class AttendanceList {
     }
 
     fun delete(id: String, checkInDateTime: LocalDateTime): Boolean {
-        return list.removeIf { it.id == id && it.checkInDateTime == checkInDateTime }
+        return this.removeIf { it.id == id && it.checkInDateTime == checkInDateTime }
     }
 
     fun getActiveAttendances(): List<Attendance> {
-        return list.filter { it.checkOutDateTime == null }
+        return this.filter { it.checkOutDateTime == null }
     }
 
     fun getAttendancesBetween(from: LocalDateTime, to: LocalDateTime): String {
-        val attendanceBetween = list.filter {
+        val attendanceBetween = this.filter {
             it.checkInDateTime.isAfter(from) && it.checkInDateTime.isBefore(to)
         }
 
@@ -61,11 +60,8 @@ class AttendanceList {
         }
     }
 
-
-
-
     override fun toString(): String {
-        if (list.isEmpty()) return "No attendance records found."
-        return list.joinToString("\n") { it.toString() }
+        if (this.isEmpty()) return "No attendance records found."
+        return this.joinToString("\n") { it.toString() }
     }
 }
