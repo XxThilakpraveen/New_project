@@ -12,13 +12,7 @@ class EmployeeManager {
         addEmployee("Bob", "Johnson", Role.DEVELOPER, "Engineering", "AS002")
         addEmployee("Clara", "Jones", Role.CEO, "Leadership", null)
     }
-
-    private fun generateId(firstName: String, lastName: String): String {
-        val first = firstName.trim().firstOrNull()?.uppercaseChar() ?: 'X'
-        val last = lastName.trim().lastOrNull()?.uppercaseChar() ?: 'Y'
-        return "$first$last${String.format("%03d", counter++)}"
-    }
-
+    
     fun addEmployee(firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
         val emp = Employee(firstName.trim(), lastName.trim(), role, dept.trim(), reportingTo?.trim())
         return employeeList.add(emp)
