@@ -17,24 +17,24 @@ class EmployeeManager {
         return employeeList.add(emp)
     }
 
-    fun updateEmployee(id: String, firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
-        val emp = employeeList.find { it.id == id }
-        return if (emp != null) {
-            emp.firstName = firstName.trim()
-            emp.lastName = lastName.trim()
-            emp.role = role
-            emp.department = dept.trim()
-            emp.reportingTo = reportingTo?.trim()
-            emp.isValid()
-        } else {
-            println("Employee with ID $id not found.")
-            false
-        }
-    }
-
-    fun deleteEmployee(id: String): Boolean {
-        return employeeList.removeIf { it.id == id }
-    }
+//    fun updateEmployee(id: String, firstName: String, lastName: String, role: Role, dept: String, reportingTo: String?): Boolean {
+//        val emp = employeeList.find { it.id == id }
+//        return if (emp != null) {
+//            emp.firstName = firstName.trim()
+//            emp.lastName = lastName.trim()
+//            emp.role = role
+//            emp.department = dept.trim()
+//            emp.reportingTo = reportingTo?.trim()
+//            emp.isValid()
+//        } else {
+//            println("Employee with ID $id not found.")
+//            false
+//        }
+//    }
+//
+//    fun deleteEmployee(id: String): Boolean {
+//        return employeeList.removeIf { it.id == id }
+//    }
 
     fun checkIn(id: String, checkInDateTime: LocalDateTime): Boolean {
         val employeeExists = employeeList.any { it.id == id }
@@ -43,7 +43,6 @@ class EmployeeManager {
             return false
         }
 
-        // New: Check if employee already checked in today
         val alreadyCheckedInToday = attendanceList.any { att -> att.id == id && att.checkInDateTime.toLocalDate() == checkInDateTime.toLocalDate()
         }
         if (alreadyCheckedInToday) {
@@ -72,18 +71,18 @@ class EmployeeManager {
         return attendanceList.update(openAttendance, checkOutDateTime)
     }
 
-    fun deleteInvalidAttendanceById(id: String): Boolean {
-        val invalidRecord = attendanceList.find {
-            it.id == id && it.checkInDateTime == it.checkOutDateTime
-        }
-
-        return if (invalidRecord != null) {
-            attendanceList.delete(invalidRecord.id, invalidRecord.checkInDateTime)
-        } else {
-            println("No invalid attendance record found for ID $id.")
-            false
-        }
-    }
+//    fun deleteInvalidAttendanceById(id: String): Boolean {
+//        val invalidRecord = attendanceList.find {
+//            it.id == id && it.checkInDateTime == it.checkOutDateTime
+//        }
+//
+//        return if (invalidRecord != null) {
+//            attendanceList.delete(invalidRecord.id, invalidRecord.checkInDateTime)
+//        } else {
+//            println("No invalid attendance record found for ID $id.")
+//            false
+//        }
+//    }
 
     fun listActiveAttendances(): String {
         val active = attendanceList.getActiveAttendances()

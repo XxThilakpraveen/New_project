@@ -17,6 +17,10 @@ class AttendanceList : ArrayList<Attendance>() {
             println("Checkout time cannot be before checkin time")
             return false
         }
+        if (checkout.toLocalDate() == att.checkInDateTime.toLocalDate()) {
+            println("Check-out must be on the same date as check-in.")
+            return false
+        }
         att.checkOutDateTime = checkout
         return if (index != -1) {
             att.calculateWorkingHours()
@@ -42,7 +46,7 @@ class AttendanceList : ArrayList<Attendance>() {
         }
 
         if (attendanceBetween.isEmpty()) {
-            return "No attendance records found for the given range."
+            return "No attendance records found for the given time range."
         }
 
         val groupedById = attendanceBetween.groupBy { it.id }

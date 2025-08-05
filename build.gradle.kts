@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("io.dropwizard:dropwizard-core:4.0.0")
 }
 
 tasks.test {
